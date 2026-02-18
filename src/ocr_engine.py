@@ -138,9 +138,11 @@ class OCREngine:
         current_table = []
         for line in lines:
             if '\t' in line or '|' in line:
-                # Likely a table row
+                # Likely a table row - replace pipes with tabs, split, and filter empty cells
                 cells = [cell.strip() for cell in line.replace('|', '\t').split('\t')]
-                if any(cells):
+                # Filter out empty cells
+                cells = [cell for cell in cells if cell]
+                if cells:
                     current_table.append(cells)
             else:
                 if current_table:
