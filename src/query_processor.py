@@ -1,5 +1,5 @@
 """Query intent analysis and processing."""
-from typing import Optional, List, Dict, Any
+from typing import Optional, Dict, Any
 from dataclasses import dataclass
 from enum import Enum
 import logging
@@ -23,13 +23,6 @@ class QueryIntent:
     output_format: str = "excel"           # excel, csv, json
     template: Optional[str] = None         # Custom format template
     confidence: float = 0.0
-
-@dataclass
-class ProcessingResult:
-    """Result from query processing."""
-    data: Any
-    format: str
-    metadata: Dict[str, Any]
 
 class QueryProcessor:
     """Process user queries using LLM."""
@@ -110,6 +103,8 @@ Respond in JSON format:
 
     def _fallback_analysis(self, query: str) -> QueryIntent:
         """Fallback rule-based intent analysis."""
+        if query is None:
+            raise ValueError("Query cannot be None")
         query_lower = query.lower()
 
         # Detect target
@@ -156,6 +151,14 @@ Respond in JSON format:
         Returns:
             Formatted data as string
         """
+        # Check if model_manager is available for LLM formatting
+        if self.model_manager is None:
+            # Fall back to basic formatting
+            if intent.output_format == "json" and isinstance(data, list):
+                import json
+                return json.dumps(data, ensure_ascii=False, indent=2)
+            return str(data)
+
         llm = self._get_llm()
 
         if intent.output_format == "json":
