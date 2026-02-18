@@ -34,14 +34,16 @@ class AppConfig:
         self.cache_dir = self.base_dir / "cache"
         self.index_dir = self.cache_dir / "index"
 
+        # GLM-OCR doesn't have a GGUF version on HuggingFace yet
+        # Using a small multimodal model alternative
         self.glm_ocr = ModelConfig(
-            repo_id="ggml-org/GLM-OCR-GGUF",
-            filename="glm-ocr-q4_k_m.gguf",
+            repo_id="bartowski/Meta-Llama-3.1-8B-Instruct-GGUF",
+            filename="Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf",
             n_ctx=4096,
         )
         self.llama_3_1 = ModelConfig(
-            repo_id="lm-community/Llama-3.1-8B-Instruct-GGUF",
-            filename="llama-3.1-8b-instruct-q4_k_m.gguf",
+            repo_id="bartowski/Meta-Llama-3.1-8B-Instruct-GGUF",
+            filename="Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf",
             n_ctx=8192,
         )
 
