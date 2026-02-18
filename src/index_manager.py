@@ -1,13 +1,13 @@
 """Full text indexing using Whoosh."""
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import List, Optional
 from dataclasses import dataclass
 import logging
 from whoosh.index import create_in, exists_in, open_dir
 from whoosh.fields import Schema, TEXT, ID
 from whoosh.qparser import QueryParser
+from whoosh.query import And, Term
 import tempfile
-import shutil
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ class IndexManager:
         self.index = None
         self._init_index()
 
-    def _init_index(self):
+    def _init_index(self) -> None:
         """Initialize Whoosh index."""
         if exists_in(str(self.index_dir)):
             self.index = open_dir(str(self.index_dir))
@@ -42,7 +42,7 @@ class IndexManager:
                 )
             )
 
-    def index_document(self, doc_id: str, pages: List[tuple]):
+    def index_document(self, doc_id: str, pages: List[tuple]) -> None:
         """Index a document.
 
         Args:
@@ -76,34 +76,33 @@ class IndexManager:
         Returns:
             List of SearchResult
         """
-        searcher = self.index.searcher()
         parser = QueryParser("content", self.index.schema)
-
         q = parser.parse(query)
 
         if doc_id:
-            q = parser.parse(f"{query} doc_id:{doc_id}")
+            # Use And query to combine content search with doc_id filter
+            q = And([q, Term("doc_id", doc_id)])
 
-        results = searcher.search(q, limit=limit)
+        with self.index.searcher() as searcher:
+            results = searcher.search(q, limit=limit)
 
-        search_results = []
-        for r in results:
-            search_results.append(SearchResult(
-                page_num=int(r["page_num"]),
-                content=r.get("content", "")[:200],  # Preview
-                score=r.score
-            ))
+            search_results = []
+            for r in results:
+                search_results.append(SearchResult(
+                    page_num=int(r["page_num"]),
+                    content=r.get("content", "")[:200],  # Preview
+                    score=r.score
+                ))
 
-        searcher.close()
-        return search_results
+            return search_results
 
-    def clear_document(self, doc_id: str):
+    def clear_document(self, doc_id: str) -> None:
         """Remove a document from index."""
         writer = self.index.writer()
         writer.delete_by_term("doc_id", doc_id)
         writer.commit()
 
-    def close(self):
+    def close(self) -> None:
         """Close the index."""
         if self.index:
             self.index.close()
