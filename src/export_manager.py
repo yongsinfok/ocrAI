@@ -89,7 +89,9 @@ class ExportManager:
             try:
                 parsed = json.loads(data)
                 return self._to_dataframe(parsed)
-            except:
+            except json.JSONDecodeError:
+                return pd.DataFrame({"Value": [data]})
+            except Exception:
                 return pd.DataFrame({"Value": [data]})
 
         # Fallback
