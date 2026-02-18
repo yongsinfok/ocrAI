@@ -4,6 +4,7 @@ models/*.bin
 
 # Cache
 cache/
+!cache/.gitkeep
 
 # Python
 __pycache__/
