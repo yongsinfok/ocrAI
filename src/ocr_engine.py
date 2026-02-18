@@ -21,7 +21,7 @@ class OCRResult:
 class OCREngine:
     """OCR processing engine using GLM-OCR."""
 
-    def __init__(self, model_manager, cache_dir: Optional[Path] = None):
+    def __init__(self, model_manager: 'ModelManager', cache_dir: Optional[Path] = None):
         """Initialize OCR engine.
 
         Args:
@@ -41,7 +41,7 @@ class OCREngine:
 
     def _get_cache_path(self, image_bytes: bytes) -> Path:
         """Get cache path for an image."""
-        h = hashlib.md5(image_bytes).hexdigest()
+        h = hashlib.md5(image_bytes, usedforsecurity=False).hexdigest()
         return self.cache_dir / f"{h}.json"
 
     def _load_from_cache(self, image_bytes: bytes) -> Optional[OCRResult]:
@@ -140,8 +140,7 @@ class OCREngine:
             if '\t' in line or '|' in line:
                 # Likely a table row
                 cells = [cell.strip() for cell in line.replace('|', '\t').split('\t')]
-                cells = [c for c in cells if c]
-                if cells:
+                if any(cells):
                     current_table.append(cells)
             else:
                 if current_table:
