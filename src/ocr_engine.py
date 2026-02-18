@@ -1,4 +1,4 @@
-"""OCR processing using GLM-OCR."""
+"""OCR processing using Tesseract."""
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 from dataclasses import dataclass
@@ -19,25 +19,17 @@ class OCRResult:
     raw_output: Dict[str, Any]
 
 class OCREngine:
-    """OCR processing engine using GLM-OCR."""
+    """OCR processing engine using Tesseract."""
 
-    def __init__(self, model_manager: 'ModelManager', cache_dir: Optional[Path] = None):
+    def __init__(self, model_manager: Optional['ModelManager'] = None, cache_dir: Optional[Path] = None):
         """Initialize OCR engine.
 
         Args:
-            model_manager: ModelManager instance
+            model_manager: Not used for Tesseract (kept for compatibility)
             cache_dir: Directory for caching OCR results
         """
-        self.model_manager = model_manager
         self.cache_dir = cache_dir or Path("cache/ocr")
         self.cache_dir.mkdir(parents=True, exist_ok=True)
-        self._model = None
-
-    def _get_model(self):
-        """Get or load GLM-OCR model."""
-        if self._model is None:
-            self._model = self.model_manager.get_model("glm_ocr")
-        return self._model
 
     def _get_cache_path(self, image_bytes: bytes) -> Path:
         """Get cache path for an image."""
@@ -71,7 +63,7 @@ class OCREngine:
             logger.warning(f"Failed to save cache: {e}")
 
     def process_image(self, image_bytes: bytes, use_cache: bool = True) -> OCRResult:
-        """Process an image with OCR.
+        """Process an image with OCR using Tesseract.
 
         Args:
             image_bytes: Image data as bytes
@@ -86,34 +78,40 @@ class OCREngine:
                 logger.info("Using cached OCR result")
                 return cached
 
-        model = self._get_model()
-
-        # Convert image to base64 for model input
-        import base64
-        img_b64 = base64.b64encode(image_bytes).decode('utf-8')
-
-        # Prepare prompt for OCR
-        prompt = """Extract all text and tables from this image. For tables, return them in a structured format.
-        If there are tables, identify them clearly with their headers and row data."""
-
         try:
-            response = model(
-                prompt,
-                images=[img_b64],
-                max_tokens=2048,
-                temperature=0.1,
+            import pytesseract
+            from pytesseract import Output
+        except ImportError:
+            raise ImportError(
+                "pytesseract is required for OCR. Install it with: pip install pytesseract\n"
+                "Also make sure Tesseract OCR is installed on your system:\n"
+                "- Windows: https://github.com/UB-Mannheim/tesseract/wiki\n"
+                "- Linux: sudo apt install tesseract-ocr\n"
+                "- macOS: brew install tesseract"
             )
 
-            text = response['choices'][0]['text']
+        try:
+            # Convert bytes to PIL Image
+            image = Image.open(io.BytesIO(image_bytes))
 
-            # Parse tables from response (basic implementation)
+            # Get OCR data with confidence scores
+            data = pytesseract.image_to_data(image, output_type=Output.DICT)
+
+            # Extract text
+            text = pytesseract.image_to_string(image)
+
+            # Calculate average confidence
+            confidences = [int(conf) for conf in data['conf'] if str(conf).isdigit()]
+            avg_confidence = sum(confidences) / len(confidences) / 100 if confidences else 0.5
+
+            # Parse tables from OCR text
             tables = self._extract_tables(text)
 
             result = OCRResult(
-                text=text,
+                text=text.strip(),
                 tables=tables,
-                confidence=0.9,  # Placeholder
-                raw_output=response
+                confidence=avg_confidence,
+                raw_output={'data': data}
             )
 
             if use_cache:
@@ -128,8 +126,8 @@ class OCREngine:
     def _extract_tables(self, text: str) -> List[List[List[str]]]:
         """Extract table structures from OCR text.
 
-        This is a simplified implementation. GLM-OCR should return
-        structured table data directly.
+        This is a simplified implementation. For better table extraction,
+        consider using pdfplumber or the LLM to parse the OCR text into tables.
         """
         # Basic table detection - look for tab-separated data
         tables = []

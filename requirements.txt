@@ -1,6 +1,6 @@
 streamlit>=1.31.0
 pymupdf>=1.23.0
-llama-cpp-python>=0.2.0
+pytesseract>=0.3.0
 huggingface-hub>=0.20.0
 openpyxl>=3.1.0
 pandas>=2.0.0

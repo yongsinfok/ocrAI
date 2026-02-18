@@ -21,7 +21,9 @@ class AppConfig:
     index_dir: Path = field(init=False)
 
     # Model configurations
-    glm_ocr: ModelConfig = field(init=False)
+    # OCR: Tesseract (local OCR engine)
+    # LLM: Llama-3.1 for query understanding and text processing
+    ocr_engine: str = "tesseract"  # Use Tesseract OCR
     llama_3_1: ModelConfig = field(init=False)
 
     # Processing
