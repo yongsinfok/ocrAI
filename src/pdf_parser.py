@@ -1,12 +1,13 @@
 # src/pdf_parser.py
 """PDF parsing and structure extraction."""
-from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+import logging
+import re
 from dataclasses import dataclass
 from enum import Enum
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
+
 import fitz  # PyMuPDF
-import re
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -52,29 +53,30 @@ class PDFParser:
         logger.info(f"Parsing {pdf_path}")
 
         doc = fitz.open(str(pdf_path))
-        pages = []
-        structure_index = {}
+        try:
+            pages = []
+            structure_index = {}
 
-        for page_num in range(len(doc)):
-            page = doc[page_num]
-            page_info = self._parse_page(page, page_num)
-            pages.append(page_info)
+            for page_num in range(len(doc)):
+                page = doc[page_num]
+                page_info = self._parse_page(page, page_num)
+                pages.append(page_info)
 
-            # Build structure index from this page
-            self._index_structure(page_info, structure_index)
+                # Build structure index from this page
+                self._index_structure(page_info, structure_index)
 
-        doc_info = DocumentInfo(
-            path=pdf_path,
-            total_pages=len(doc),
-            pages=pages,
-            structure_index=structure_index
-        )
+            doc_info = DocumentInfo(
+                path=pdf_path,
+                total_pages=len(doc),
+                pages=pages,
+                structure_index=structure_index
+            )
 
-        doc.close()
-        self.docs[pdf_path] = doc_info
-
-        logger.info(f"Parsed {len(pages)} pages, found {len(structure_index)} sections")
-        return doc_info
+            self.docs[pdf_path] = doc_info
+            logger.info(f"Parsed {len(pages)} pages, found {len(structure_index)} sections")
+            return doc_info
+        finally:
+            doc.close()
 
     def _parse_page(self, page, page_num: int) -> PageInfo:
         """Parse a single page."""
@@ -156,12 +158,13 @@ class PDFParser:
     def get_page_image(self, pdf_path: Path, page_num: int) -> Optional[bytes]:
         """Render page as image for OCR."""
         doc = fitz.open(str(pdf_path))
-        if page_num < len(doc):
-            page = doc[page_num]
-            # Render at 2x resolution for better OCR
-            pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
-            img_bytes = pix.tobytes("png")
+        try:
+            if page_num < len(doc):
+                page = doc[page_num]
+                # Render at 2x resolution for better OCR
+                pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
+                img_bytes = pix.tobytes("png")
+                return img_bytes
+            return None
+        finally:
             doc.close()
-            return img_bytes
-        doc.close()
-        return None
