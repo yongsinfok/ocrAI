@@ -36,7 +36,7 @@ if "index_manager" not in st.session_state:
     st.session_state.index_manager = IndexManager(config.index_dir)
 
 if "ocr_engine" not in st.session_state:
-    st.session_state.ocr_engine = OCREngine(st.session_state.model_manager, config.cache_dir)
+    st.session_state.ocr_engine = OCREngine(config=config)
 
 if "query_processor" not in st.session_state:
     st.session_state.query_processor = QueryProcessor(st.session_state.model_manager)
@@ -51,11 +51,51 @@ if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
 
+def check_ocr_engine():
+    """Check GLM-OCR status and display in sidebar."""
+    st.sidebar.header("🔍 OCR Engine")
+
+    ocr_status = st.session_state.ocr_engine.glm_ocr_status
+
+    if not ocr_status["enabled"]:
+        st.sidebar.info("GLM-OCR is disabled. Using Tesseract fallback.")
+        return
+
+    mode = ocr_status.get("mode", "local")
+    mode_label = "Local vLLM" if mode == "local" else "Cloud MaaS"
+
+    if ocr_status["connected"]:
+        st.sidebar.success(f"GLM-OCR Connected ({mode_label})")
+        st.sidebar.caption(f"Server: {config.glm_ocr.api_host}:{config.glm_ocr.api_port}")
+    elif ocr_status["available"]:
+        st.sidebar.warning(f"GLM-OCR Available ({mode_label})")
+        st.sidebar.caption("Not connected - will use Tesseract fallback")
+        if ocr_status.get("error"):
+            with st.sidebar.expander("Error Details"):
+                st.text(ocr_status["error"])
+    else:
+        st.sidebar.error("GLM-OCR Not Available")
+        if ocr_status.get("error"):
+            with st.sidebar.expander("Setup Instructions"):
+                st.text(ocr_status["error"])
+
+        st.sidebar.info("Using Tesseract fallback")
+
+    # Show Tesseract status
+    try:
+        import pytesseract
+        tesseract_version = pytesseract.get_tesseract_version()
+        st.sidebar.caption(f"Tesseract: {tesseract_version}")
+    except Exception:
+        st.sidebar.caption("Tesseract: Not installed")
+
+
 def check_models():
     """Check and download models if needed."""
-    st.sidebar.header("🤖 Models")
+    st.sidebar.header("🤖 LLM Models")
 
-    models = ["glm_ocr", "llama_3_1"]
+    # Only check Llama-3.1 for query processing
+    models = ["llama_3_1"]
     model_status = {}
 
     for model_name in models:
@@ -393,8 +433,9 @@ def main():
 
     # Sidebar
     with st.sidebar:
+        check_ocr_engine()
+        st.markdown("---")
         check_models()
-
         st.markdown("---")
 
         if st.button("🗑️ Clear Chat"):

@@ -7,3 +7,10 @@ pandas>=2.0.0
 whoosh>=2.7.4
 Pillow>=10.0.0
 python-dotenv>=1.0.0
+
+# GLM-OCR SDK (install from source)
+# For local vLLM deployment: pip install git+https://github.com/zai-org/GLM-OCR.git
+# Or install in editable mode after cloning:
+#   git clone https://github.com/zai-org/GLM-OCR.git
+#   cd GLM-OCR
+#   pip install -e .
