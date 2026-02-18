@@ -77,17 +77,17 @@ class AppConfig:
 
         # GLM-OCR configuration
         self.glm_ocr = GLMOCRConfig(
-            enabled=os.getenv("GLM_OCR_ENABLED", "true").lower() == "true",
+            enabled=os.getenv("GLM_OCR_ENABLED", "false").lower() == "true",
             mode=os.getenv("GLM_OCR_MODE", "local"),  # "local" or "maas"
             api_host=os.getenv("GLM_OCR_HOST", "localhost"),
             api_port=int(os.getenv("GLM_OCR_PORT", "8080")),
             api_key=os.getenv("GLM_OCR_API_KEY") or os.getenv("ZHIPU_API_KEY"),
         )
 
-        # Llama-3.1 configuration for query processing
+        # Llama-3.2-1B configuration for query processing
         self.llama_3_1 = ModelConfig(
-            repo_id="bartowski/Meta-Llama-3.1-8B-Instruct-GGUF",
-            filename="Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf",
+            repo_id="bartowski/Llama-3.2-1B-Instruct-GGUF",
+            filename="Llama-3.2-1B-Instruct-Q4_K_M.gguf",
             n_ctx=8192,
         )
 
