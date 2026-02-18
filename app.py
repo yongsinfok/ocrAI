@@ -10,7 +10,7 @@ from src.model_manager import ModelManager
 from src.pdf_parser import PDFParser
 from src.index_manager import IndexManager
 from src.ocr_engine import OCREngine
-from src.query_processor import QueryProcessor
+from src.query_processor import QueryProcessor, QueryIntent
 from src.export_manager import ExportManager
 
 # Configure logging
@@ -165,7 +165,7 @@ def render_chat():
                     )
                 with col3:
                     st.download_button(
-                        "{ } JSON",
+                        "{} JSON",
                         message["download"]["json"],
                         file_name=f"{message['download']['filename']}.json",
                         mime="application/json"
@@ -216,7 +216,7 @@ def render_chat():
                             )
                         with col3:
                             st.download_button(
-                                "{ } JSON",
+                                "{} JSON",
                                 json_data,
                                 file_name=f"export_{hash(prompt) % 10000}.json",
                                 mime="application/json"
@@ -292,7 +292,7 @@ def process_query(prompt: str) -> dict:
     return {"message": f"Could not find '{intent.target}' in the document. Please try a different search term."}
 
 
-def extract_and_format_page(doc_path: Path, page_num: int, intent) -> dict:
+def extract_and_format_page(doc_path: Path, page_num: int, intent: QueryIntent) -> dict:
     """Extract and format data from a specific page.
 
     Args:
@@ -317,7 +317,6 @@ def extract_and_format_page(doc_path: Path, page_num: int, intent) -> dict:
             data = parse_table_from_text(text)
 
             if intent.query_type.value == "format_convert":
-                formatted = st.session_state.query_processor.format_data(data, intent)
                 return {"message": f"✅ Extracted from page {page_num + 1}", "data": data}
 
             return {"message": f"✅ Extracted from page {page_num + 1}", "data": data}
