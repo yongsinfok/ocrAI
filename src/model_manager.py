@@ -1,15 +1,17 @@
 """Model download and management."""
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Dict, Any
 from huggingface_hub import hf_hub_download
 import logging
+
+from config import AppConfig
 
 logger = logging.getLogger(__name__)
 
 class ModelManager:
     """Manages GGUF model download and loading."""
 
-    def __init__(self, config):
+    def __init__(self, config: AppConfig):
         """Initialize model manager."""
         self.config = config
         self.models_dir = config.models_dir
